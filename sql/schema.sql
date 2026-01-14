@@ -59,3 +59,19 @@ CREATE TABLE IF NOT EXISTS votes (
 CREATE INDEX idx_propositions_membre ON propositions(id_membre);
 CREATE INDEX idx_votes_proposition ON votes(id_proposition);
 CREATE INDEX idx_votes_membre ON votes(id_membre);
+
+CREATE INDEX idx_penalites_membre ON penalites(id_membre);
+CREATE INDEX idx_penalites_groupe ON penalites(id_groupe);
+
+CREATE INDEX idx_propositions_membre ON propositions(id_membre);
+CREATE INDEX idx_propositions_groupe ON propositions(id_groupe);
+CREATE INDEX idx_propositions_status ON propositions(status);
+
+CREATE INDEX idx_votes_proposition ON votes(id_proposition);
+CREATE INDEX idx_votes_membre ON votes(id_membre);
+
+CREATE INDEX idx_presence_seance ON presence(id_seance);
+CREATE INDEX idx_presence_membre ON presence(id_membre);
+
+CREATE INDEX idx_projets_groupe ON projets(id_groupe);
+CREATE INDEX idx_projets_status ON projets(status);
