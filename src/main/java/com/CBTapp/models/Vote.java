@@ -3,22 +3,6 @@ package com.CBTapp.models;
 import java.sql.Date;
 
 
-enum Choix{
-    YES("Oui"),
-    NO("Non"),
-    NULL("Null");
-    private final String displayName;
-    Choix(String displayName) {
-        this.displayName = displayName;
-    }
-    public String getDisplayName() {
-        return displayName;
-    }
-    @Override
-    public String toString() {
-        return super.toString();
-    }
-}
 public class Vote {
     private int id_vote;
     private int id_prop;

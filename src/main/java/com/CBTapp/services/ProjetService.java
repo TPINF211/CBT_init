@@ -6,7 +6,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 public class ProjetService {
-    private ProjetDAO projetDAO;
+    private final ProjetDAO projetDAO;
     
     public ProjetService() {
         this.projetDAO = new ProjetDAO();

@@ -16,6 +16,8 @@ public class PropositionDAO {
             Proposition p = new Proposition();
             p.setIdProposition(rs.getInt("id_proposition"));
             p.setIdMembre(rs.getInt("id_membre"));
+            p.setNom(rs.getString("nom"));
+            p.setNomMembre(rs.getString("nom_membre"));
             p.setDescription(rs.getString("description"));
             p.setDate(rs.getDate("date"));
             p.setStatus(rs.getString("status"));
@@ -25,11 +27,13 @@ public class PropositionDAO {
     }
     
     public Proposition getById(int id) throws SQLException {
-        ResultSet rs = DatabaseManager.executeProcedure("GetpropositionsByID", id);
+        ResultSet rs = DatabaseManager.executeProcedure("GetPropositionByID", id);
         if (rs.next()) {
             Proposition p = new Proposition();
             p.setIdProposition(rs.getInt("id_proposition"));
             p.setIdMembre(rs.getInt("id_membre"));
+            p.setNom(rs.getString("nom"));
+            p.setNomMembre(rs.getString("nom_membre"));
             p.setDescription(rs.getString("description"));
             p.setDate(rs.getDate("date"));
             p.setStatus(rs.getString("status"));
@@ -38,30 +42,31 @@ public class PropositionDAO {
         return null;
     }
     
-    public int add(Proposition proposition) throws SQLException {
-        String query = "INSERT INTO propositions (id_membre, description, date, status) VALUES (?, ?, NOW(), ?)";
-        DatabaseManager.executeUpdate(query,
-            proposition.getIdMembre(),
-            proposition.getDescription(),
-            proposition.getStatus() != null ? proposition.getStatus() : "En_Examen"
-        );
-        ResultSet rs = DatabaseManager.executeQuery("SELECT LAST_INSERT_ID() AS new_pro_id");
+    public int add(String nom, int idMembre, String description) throws SQLException {
+        ResultSet rs = DatabaseManager.executeProcedure("AjouterProposition", nom, idMembre, description);
         if (rs.next()) {
+            String status = rs.getString("status");
+            if ("SUCCESS".equals(status)) {
             return rs.getInt("new_pro_id");
+            }
         }
         return -1;
     }
     
     public int delete(int id) throws SQLException {
-        ResultSet rs = DatabaseManager.executeProcedure("DeleteProp", id);
+        ResultSet rs = DatabaseManager.executeProcedure("DeleteProposition", id);
         if (rs.next()) {
             return rs.getInt("affected_rows");
         }
         return 0;
     }
     
-    public void updateStatus(int id, String newStatus) throws SQLException {
-        DatabaseManager.executeProcedure("UpdateProSta", id, newStatus);
+    public int updateStatus(int id, String newStatus) throws SQLException {
+        ResultSet rs = DatabaseManager.executeProcedure("UpdatePropositionStatus", id, newStatus);
+        if (rs.next()) {
+            return rs.getInt("rows_updated");
+        }
+        return 0;
     }
 }
 

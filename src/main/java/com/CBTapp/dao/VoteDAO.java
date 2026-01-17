@@ -1,6 +1,7 @@
 package com.CBTapp.dao;
 
 import com.CBTapp.db.DatabaseManager;
+import com.CBTapp.models.Choix;
 import com.CBTapp.models.Vote;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -38,8 +39,23 @@ public class VoteDAO {
         return null;
     }
     
-    public void updateChoix(int id, String newChoix) throws SQLException {
-        DatabaseManager.executeProcedure("UpdateProSta", id, newChoix);
+    public int creerVote(int idProposition, int idMembre, String choix) throws SQLException {
+        ResultSet rs = DatabaseManager.executeProcedure("CreerVote", idProposition, idMembre, choix);
+        if (rs.next()) {
+            String status = rs.getString("status");
+            if ("SUCCESS".equals(status)) {
+                return rs.getInt("new_vote_id");
+            }
+        }
+        return -1;
+    }
+    
+    public int updateChoix(int id, String newChoix) throws SQLException {
+        ResultSet rs = DatabaseManager.executeProcedure("UpdateVote", id, newChoix);
+        if (rs.next()) {
+            return rs.getInt("rows_updated");
+        }
+        return 0;
     }
 }
 

@@ -2,6 +2,8 @@ package com.CBTapp.dao;
 
 import com.CBTapp.db.DatabaseManager;
 import com.CBTapp.models.Projet;
+import com.CBTapp.models.Status;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;

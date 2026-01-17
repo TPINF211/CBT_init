@@ -20,15 +20,15 @@ public class PropositionService {
         return propositionDAO.getById(id);
     }
     
-    public int createProposition(Proposition proposition) throws SQLException {
-        return propositionDAO.add(proposition);
+    public int createProposition(String nom, int idMembre, String description) throws SQLException {
+        return propositionDAO.add(nom, idMembre, description);
     }
     
     public int deleteProposition(int id) throws SQLException {
         return propositionDAO.delete(id);
     }
     
-    public void updatePropositionStatus(int id, String status) throws SQLException {
-        propositionDAO.updateStatus(id, status);
+    public int updatePropositionStatus(int id, String status) throws SQLException {
+        return propositionDAO.updateStatus(id, status);
     }
 }

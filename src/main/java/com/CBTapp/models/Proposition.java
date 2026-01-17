@@ -5,6 +5,8 @@ import java.sql.Date;
 public class Proposition {
     private int idProposition;
     private int idMembre;
+    private String nom;
+    private String nomMembre;
     private String description;
     private Date date;
     private String status;
@@ -56,5 +58,21 @@ public class Proposition {
     
     public void setStatus(String status) {
         this.status = status;
+    }
+    
+    public String getNom() {
+        return nom;
+    }
+    
+    public void setNom(String nom) {
+        this.nom = nom;
+    }
+    
+    public String getNomMembre() {
+        return nomMembre;
+    }
+    
+    public void setNomMembre(String nomMembre) {
+        this.nomMembre = nomMembre;
     }
 }

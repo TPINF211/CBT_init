@@ -31,7 +31,7 @@ public class DatabaseConnection {
                 .getResourceAsStream("config.properties")) {
             if (input == null) {
                 LOGGER.log(Level.WARNING, "config.properties not found, using default values");
-                url = "jdbc:mysql://localhost:3306/cbtapp_db";
+                url = "jdbc:mysql://localhost:3306/cbt_db";
                 username = "root";
                 password = "";
                 driver = "com.mysql.cj.jdbc.Driver";
@@ -41,7 +41,7 @@ public class DatabaseConnection {
             Properties prop = new Properties();
             prop.load(input);
             
-            url = prop.getProperty("db.url", "jdbc:mysql://localhost:3306/cbtapp_db");
+            url = prop.getProperty("db.url", "jdbc:mysql://localhost:3306/cbt_db");
             username = prop.getProperty("db.username", "root");
             password = prop.getProperty("db.password", "");
             driver = prop.getProperty("db.driver", "com.mysql.cj.jdbc.Driver");

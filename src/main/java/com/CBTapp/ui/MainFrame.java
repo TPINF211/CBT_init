@@ -1,50 +1,78 @@
 package com.CBTapp.ui;
 
+import com.CBTapp.models.UserSession;
+import com.CBTapp.services.AuthService;
 import com.CBTapp.ui.components.CustomButton;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 /**
  * Main application window
  */
 public class MainFrame extends JFrame {
-    private ClientPanel clientPanel;
+    private static final Color BLUE_COLOR = new Color(70, 130, 180);
+    private static final Color BEIGE_COLOR = new Color(245, 245, 220);
+    
+    private JPanel mainPanel;
+    private AuthService authService;
+    private JLabel userInfoLabel;
     
     public MainFrame() {
+        authService = new AuthService();
         initializeFrame();
-        createComponents();
-        layoutComponents();
-        setupEventHandlers();
+        showLogin();
     }
     
     private void initializeFrame() {
-        setTitle("CBT Application");
+        setTitle("CBT Application - Gestion de Tontine");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(1200, 800);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
         
-        // Apply violet theme (based on user preference)
+        // Apply blue and beige theme
         try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeel());
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            UIManager.put("Panel.background", BEIGE_COLOR);
+            UIManager.put("TabbedPane.background", BEIGE_COLOR);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
     
-    private void createComponents() {
+    private void showLogin() {
+        getContentPane().removeAll();
+        
+        LoginPanel loginPanel = new LoginPanel(() -> {
+            showMainInterface();
+        });
+        
+        add(loginPanel, BorderLayout.CENTER);
+        revalidate();
+        repaint();
+    }
+    
+    private void showMainInterface() {
+        getContentPane().removeAll();
+        
         // Create menu bar
         JMenuBar menuBar = new JMenuBar();
+        menuBar.setBackground(BEIGE_COLOR);
         
-        JMenu fileMenu = new JMenu("File");
-        JMenuItem exitItem = new JMenuItem("Exit");
+        JMenu fileMenu = new JMenu("Fichier");
+        JMenuItem logoutItem = new JMenuItem("Déconnexion");
+        logoutItem.addActionListener(e -> {
+            authService.logout();
+            showLogin();
+        });
+        JMenuItem exitItem = new JMenuItem("Quitter");
         exitItem.addActionListener(e -> System.exit(0));
+        fileMenu.add(logoutItem);
+        fileMenu.addSeparator();
         fileMenu.add(exitItem);
         
-        JMenu helpMenu = new JMenu("Help");
-        JMenuItem aboutItem = new JMenuItem("About");
+        JMenu helpMenu = new JMenu("Aide");
+        JMenuItem aboutItem = new JMenuItem("À propos");
         aboutItem.addActionListener(e -> showAboutDialog());
         helpMenu.add(aboutItem);
         
@@ -52,45 +80,49 @@ public class MainFrame extends JFrame {
         menuBar.add(helpMenu);
         setJMenuBar(menuBar);
         
-        // Create main panel
-        clientPanel = new ClientPanel();
+        // User info panel
+        JPanel userPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        userPanel.setBackground(BEIGE_COLOR);
+        userInfoLabel = new JLabel();
+        updateUserInfo();
+        userPanel.add(userInfoLabel);
         
-        // Create toolbar
-        JToolBar toolBar = new JToolBar();
-        CustomButton refreshBtn = new CustomButton("Refresh");
-        CustomButton addBtn = new CustomButton("Add");
-        CustomButton editBtn = new CustomButton("Edit");
-        CustomButton deleteBtn = new CustomButton("Delete");
+        // Create main panel based on role
+        mainPanel = new RoleBasedPanel();
         
-        toolBar.add(refreshBtn);
-        toolBar.addSeparator();
-        toolBar.add(addBtn);
-        toolBar.add(editBtn);
-        toolBar.add(deleteBtn);
+        add(userPanel, BorderLayout.NORTH);
+        add(mainPanel, BorderLayout.CENTER);
         
-        add(toolBar, BorderLayout.NORTH);
-        add(clientPanel, BorderLayout.CENTER);
-        
-        // Status bar
-        JPanel statusPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        JLabel statusLabel = new JLabel("Ready");
-        statusPanel.add(statusLabel);
-        add(statusPanel, BorderLayout.SOUTH);
+        revalidate();
+        repaint();
     }
     
-    private void layoutComponents() {
-        // Components are already laid out in createComponents
+    private void updateUserInfo() {
+        if (UserSession.getInstance().isLoggedIn()) {
+            var user = UserSession.getInstance().getCurrentUser();
+            String roleName = getRoleDisplayName(user.getRole());
+            userInfoLabel.setText("Connecté en tant que: " + user.getNom() + " (" + roleName + ")");
+            userInfoLabel.setForeground(BLUE_COLOR);
+            userInfoLabel.setFont(new Font(userInfoLabel.getFont().getName(), Font.BOLD, 12));
+        }
     }
     
-    private void setupEventHandlers() {
-        // Event handlers are set up in createComponents
+    private String getRoleDisplayName(com.CBTapp.models.Membre.Role role) {
+        switch (role) {
+            case PRESIDENT: return "Président";
+            case SECRETAIRE: return "Secrétaire";
+            case CENSEUR: return "Censeur";
+            case CASSIERE: return "Caissier";
+            default: return "Membre";
+        }
     }
     
     private void showAboutDialog() {
         JOptionPane.showMessageDialog(
             this,
-            "CBT Application\nVersion 1.0.0\n\nA Java SQL Application",
-            "About",
+            "Application CBT - Gestion de Tontine\nVersion 1.0.0\n\n" +
+            "Système de gestion avec contrôle d'accès basé sur les rôles",
+            "À propos",
             JOptionPane.INFORMATION_MESSAGE
         );
     }
